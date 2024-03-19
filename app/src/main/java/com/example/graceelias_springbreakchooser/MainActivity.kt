@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private var language = "English"
+    private var language = ""
 
     private var sensorManager: SensorManager? = null
     private var currentAcceleration = 0f
@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val options = arrayOf("English", "Spanish", "French", "Italian", "Mandarin", "Hindi")
+        val options = arrayOf("Choose Language", "English", "Spanish", "French", "Italian", "Mandarin", "Hindi")
 
         val adapter = ArrayAdapter(this, layout.simple_spinner_item, options)
         adapter.setDropDownViewResource(layout.simple_spinner_dropdown_item)
@@ -61,75 +61,70 @@ class MainActivity : AppCompatActivity() {
         binding.spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
                 val selectedItem = parent.getItemAtPosition(position).toString()
+                if(selectedItem != "Choose Language") {
+                    Toast.makeText(
+                        this@MainActivity,
+                        "Say a phrase in $selectedItem",
+                        Toast.LENGTH_SHORT
+                    )
+                        .show()
 
-                Toast.makeText(
-                    this@MainActivity,
-                    "Say a phrase in $selectedItem",
-                    Toast.LENGTH_SHORT)
-                    .show()
+                    val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
+                    intent.putExtra(
+                        RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                        RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
+                    )
+                    intent.putExtra(
+                        RecognizerIntent.EXTRA_LANGUAGE,
+                        Locale.getDefault()
+                    )
 
-                val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
-                intent.putExtra(
-                    RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-                    RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
-                )
-                intent.putExtra(
-                    RecognizerIntent.EXTRA_LANGUAGE,
-                    Locale.getDefault()
-                )
+                    if (selectedItem.equals("English")) {
+                        intent.putExtra(
+                            RecognizerIntent.EXTRA_LANGUAGE,
+                            "en-US"
+                        )
+                        language = "English"
+                    } else if (selectedItem.equals("Spanish")) {
+                        intent.putExtra(
+                            RecognizerIntent.EXTRA_LANGUAGE,
+                            "es-ES"
+                        )
+                        language = "Spanish"
+                    } else if (selectedItem.equals("French")) {
+                        intent.putExtra(
+                            RecognizerIntent.EXTRA_LANGUAGE,
+                            "fr-FR"
+                        )
+                        language = "French"
+                    } else if (selectedItem.equals("Italian")) {
+                        intent.putExtra(
+                            RecognizerIntent.EXTRA_LANGUAGE,
+                            "it-IT"
+                        )
+                        language = "Italian"
+                    } else if (selectedItem.equals("Mandarin")) {
+                        intent.putExtra(
+                            RecognizerIntent.EXTRA_LANGUAGE,
+                            "zh-CN"
+                        )
+                        language = "Mandarin"
+                    } else if (selectedItem.equals("Hindi")) {
+                        intent.putExtra(
+                            RecognizerIntent.EXTRA_LANGUAGE,
+                            "hi-IN"
+                        )
+                        language = "Hindi"
+                    }
 
-                if(selectedItem.equals("English"))
-                {
-                    intent.putExtra(
-                        RecognizerIntent.EXTRA_LANGUAGE,
-                        "en-US"
-                    )
-                    language = "English"
-                }
-                else if(selectedItem.equals("Spanish"))
-                {
-                    intent.putExtra(
-                        RecognizerIntent.EXTRA_LANGUAGE,
-                        "es-ES"
-                    )
-                    language = "Spanish"
-                }
-                else if(selectedItem.equals("French"))
-                {
-                    intent.putExtra(
-                        RecognizerIntent.EXTRA_LANGUAGE,
-                        "fr-FR"
-                    )
-                    language = "French"
-                }
-                else if(selectedItem.equals("Italian"))
-                {
-                    intent.putExtra(
-                        RecognizerIntent.EXTRA_LANGUAGE,
-                        "it-IT"
-                    )
-                    language = "Italian"
-                }
-                else if(selectedItem.equals("Mandarin"))
-                {
-                    intent.putExtra(
-                        RecognizerIntent.EXTRA_LANGUAGE,
-                        "zh-CN"
-                    )
-                    language = "Mandarin"
+                    intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Speak to text")
+
+                    launcherSpeechResult.launch(intent)
                 }
                 else
                 {
-                    intent.putExtra(
-                        RecognizerIntent.EXTRA_LANGUAGE,
-                        "hi-IN"
-                    )
-                    language = "Hindi"
+                    language = ""
                 }
-
-                intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Speak to text")
-
-                launcherSpeechResult.launch(intent)
 
             }
 
@@ -163,45 +158,64 @@ class MainActivity : AppCompatActivity() {
             {
                 if(language == "English")
                 {
-                    val hello: MediaPlayer = MediaPlayer.create(this@MainActivity, R.raw.english)
-                    hello.start()
                     val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uris[0]))
                     startActivity(intent)
+                    val hello: MediaPlayer = MediaPlayer.create(this@MainActivity, R.raw.english)
+                    hello.start()
+                    hello.setOnCompletionListener { hello ->
+                        hello.release()
+                    }
+
                 }
                 else if(language == "Spanish")
                 {
-                    val hello: MediaPlayer = MediaPlayer.create(this@MainActivity, R.raw.spanish)
-                    hello.start()
                     val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uris[1]))
                     startActivity(intent)
+                    val hello: MediaPlayer = MediaPlayer.create(this@MainActivity, R.raw.spanish)
+                    hello.start()
+                    hello.setOnCompletionListener { hello ->
+                        hello.release()
+                    }
                 }
                 else if(language == "French")
                 {
-                    val hello: MediaPlayer = MediaPlayer.create(this@MainActivity, R.raw.french)
-                    hello.start()
                     val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uris[2]))
                     startActivity(intent)
+                    val hello: MediaPlayer = MediaPlayer.create(this@MainActivity, R.raw.french)
+                    hello.start()
+                    hello.setOnCompletionListener { hello ->
+                        hello.release()
+                    }
                 }
                 else if(language == "Italian")
                 {
-                    val hello: MediaPlayer = MediaPlayer.create(this@MainActivity, R.raw.italian)
-                    hello.start()
                     val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uris[3]))
                     startActivity(intent)
+                    val hello: MediaPlayer = MediaPlayer.create(this@MainActivity, R.raw.italian)
+                    hello.start()
+                    hello.setOnCompletionListener { hello ->
+                        hello.release()
+                    }
                 }
                 else if(language == "Mandarin")
                 {
-                    val hello: MediaPlayer = MediaPlayer.create(this@MainActivity, R.raw.mandarin)
-                    hello.start()
                     val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uris[4]))
                     startActivity(intent)
-                }
-                else
-                {
-                    val hello: MediaPlayer = MediaPlayer.create(this@MainActivity, R.raw.hindi)
+                    val hello: MediaPlayer = MediaPlayer.create(this@MainActivity, R.raw.mandarin)
                     hello.start()
+                    hello.setOnCompletionListener { hello ->
+                        hello.release()
+                    }
+                }
+                else if(language == "Hindi")
+                {
                     val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uris[5]))
                     startActivity(intent)
+                    val hello: MediaPlayer = MediaPlayer.create(this@MainActivity, R.raw.hindi)
+                    hello.start()
+                    hello.setOnCompletionListener { hello ->
+                        hello.release()
+                    }
                 }
             }
         }
