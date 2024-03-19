@@ -7,6 +7,8 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.media.MediaPlayer
+import android.net.Uri
 import android.os.Bundle
 import android.speech.RecognizerIntent
 import android.view.View
@@ -35,9 +37,14 @@ class MainActivity : AppCompatActivity() {
     private var language = "English"
 
     private var sensorManager: SensorManager? = null
-    private var acceleration = 0f
     private var currentAcceleration = 0f
-    private var lastAcceleration = 0f
+
+    private var uris = arrayOf("geo:40.71298,74.00720?q=New York City",
+        "geo:19.43011,99.13361?q=Mexico City",
+        "geo:48.85679,2.35108?q=Paris",
+        "geo:41.88929,12.49355?q=Rome",
+        "geo:39.90275,116.40082?q=Beijing",
+        "geo:28.64393,77.09298?q=Delhi")
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
@@ -137,11 +144,7 @@ class MainActivity : AppCompatActivity() {
             .registerListener(sensorListener, sensorManager!!
                 .getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL)
 
-        acceleration = 10f
         currentAcceleration = SensorManager.GRAVITY_EARTH
-        lastAcceleration = SensorManager.GRAVITY_EARTH
-
-
     }
 
     private val sensorListener: SensorEventListener = object : SensorEventListener {
@@ -151,39 +154,54 @@ class MainActivity : AppCompatActivity() {
             val x = event.values[0]
             val y = event.values[1]
             val z = event.values[2]
-            lastAcceleration = currentAcceleration
 
             // Getting current accelerations
             // with the help of fetched x,y,z values
             currentAcceleration = sqrt((x * x + y * y + z * z).toDouble()).toFloat()
-            val delta: Float = currentAcceleration - lastAcceleration
-            acceleration = acceleration * 0.9f + delta
 
-            if (acceleration > 12)
+            if (currentAcceleration > 10)
             {
                 if(language == "English")
                 {
-
+                    val hello: MediaPlayer = MediaPlayer.create(this@MainActivity, R.raw.english)
+                    hello.start()
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uris[0]))
+                    startActivity(intent)
                 }
                 else if(language == "Spanish")
                 {
-
+                    val hello: MediaPlayer = MediaPlayer.create(this@MainActivity, R.raw.spanish)
+                    hello.start()
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uris[1]))
+                    startActivity(intent)
                 }
                 else if(language == "French")
                 {
-
+                    val hello: MediaPlayer = MediaPlayer.create(this@MainActivity, R.raw.french)
+                    hello.start()
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uris[2]))
+                    startActivity(intent)
                 }
                 else if(language == "Italian")
                 {
-
+                    val hello: MediaPlayer = MediaPlayer.create(this@MainActivity, R.raw.italian)
+                    hello.start()
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uris[3]))
+                    startActivity(intent)
                 }
                 else if(language == "Mandarin")
                 {
-
+                    val hello: MediaPlayer = MediaPlayer.create(this@MainActivity, R.raw.mandarin)
+                    hello.start()
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uris[4]))
+                    startActivity(intent)
                 }
                 else
                 {
-                    
+                    val hello: MediaPlayer = MediaPlayer.create(this@MainActivity, R.raw.hindi)
+                    hello.start()
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uris[5]))
+                    startActivity(intent)
                 }
             }
         }
